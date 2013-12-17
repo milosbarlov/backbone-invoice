@@ -11,7 +11,23 @@
             poreskaOsnovica:'',
             pdv:'',
             ukupanIznos:''
-        }
+        },
+        validate:function(attrs){
+            if(isNaN(attrs.sifra)){
+                this.flag = true;
+                return'you must put numerican value'
+            }
+                
+            
+        },
+        initialize:function(){
+            this.on('invalid',function(model,error){
+                alert(error);
+            })
+        },
+         flag:false
+         ,
+         
         
     });
     
@@ -46,7 +62,7 @@
        tagName:'table border="1"',
        initialize:function(){
            var self = this;
-          collection.on('add',function(){
+           this.collection.on('add',function(){
              self.render();
           })
        },
@@ -98,17 +114,17 @@
             ten:'ukupanIznos'
         },
         
-         model:new Model(),
        
         setFocus:function(e){
             if(e.keyCode === 13){
-                
-                var y = $(e.target).attr('class');
-                var set = this.map[y].next;
-                var w = this.dataModel[y];
-                var sett = $('.'+y).val();
-                this.model.set(w,sett);
+                var y = $(e.target).attr('class'); // uzima nazziv za sadasnje polje
+                var set = this.map[y].next;    // uzima naziv za sledece polje
+                var w = this.dataModel[y];    // uzima naziv koji treba da se setuje u model
+                var sett = $('.'+y).val();    // uzima vrednost input polja
+                this.model.flag = false;
+                this.model.set(w,sett,{validate:true});
                 this.model.set('rb',this.ordinalNumber());
+                
                 
                 if(set === 'nine'){
                     this.porOsnovica();
@@ -123,9 +139,14 @@
                     this.resetInput();
                     $('.two').focus();
                     $('.one').val(this.ordinalNumber());
-                }else{
-                $('.'+set).focus();
                 }
+                else if(this.model.flag === true){
+                    $('.'+y).val('').focus();
+                }
+                else if(this.model.flag === false){
+                    
+                    $('.'+set).focus();
+                };
                 
                  
             }
@@ -171,13 +192,13 @@
         var model = new Model();
        
        
-        var viewCollection = new ViewCollection({collection:collection});
+        var viewCollection = new ViewCollection({collection:collection,model:model});
         viewCollection.render();
       
        
         $('body').append(viewCollection.el);
         
-       
+    
         
     })
     
