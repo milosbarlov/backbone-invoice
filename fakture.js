@@ -12,16 +12,80 @@
             pdv:'',
             ukupanIznos:''
         },
-        
+         validation_help:{
+            two:'',
+            three:'',
+            foure:'',
+            five:'',
+            six:'',
+            seven:'',
+            eight:'',
+            nine:'',
+            ten:''
+        },
+        res_validation_help:function(){
+            return{
+                two:'',
+                three:'',
+                foure:'',
+                five:'',
+                six:'',
+                seven:'',
+                eight:'',
+                nine:'',
+                ten:''
+               }
+        },
         validate:function(attrs){
            if(attrs.sifra === ''){
                this.flag = true;
-               return '1111111';
-               
-           }else if(attrs.vrstaDobra === ''){
-               this.flag = false;
-               return '22222';
+               return 'You must fill the field';    
            }
+          else if(attrs.vrstaDobra === '' && this.validation_help.three === true){
+               this.flag = true;
+               return 'You must fill the field';
+           }
+           else if(isNaN(attrs.vrstaDobra) ){
+               this.flag = true;
+               return 'You must put numerican value'
+           }
+           else if(attrs.jm === '' && this.validation_help.foure === true ){
+               this.flag = true;
+               return 'You must fill the field';
+           }
+           else if(attrs.kol === '' && this.validation_help.five === true ){
+               this.flag = true;
+               return 'You must fill the field';
+           }
+           else if(isNaN(attrs.kol) ){
+               this.flag = true;
+               return 'You must put numerican value'
+           }
+           else if(attrs.cena === '' && this.validation_help.six === true ){
+               this.flag = true;
+               return 'You must fill the field';
+           }
+           else if(isNaN(attrs.cena) ){
+               this.flag = true;
+               return 'You must put numerican value'
+           }
+           else if(attrs.rab === '' && this.validation_help.seven === true ){
+               this.flag = true;
+               return 'You must fill the field';
+           }
+           else if(isNaN(attrs.rab) ){
+               this.flag = true;
+               return 'You must put numerican value'
+           }
+           else if(attrs.pdv === '' && this.validation_help.nine === true ){
+               this.flag = true;
+               return 'You must fill the field';
+           }
+           else if(isNaN(attrs.pdv) ){
+               this.flag = true;
+               return 'You must put numerican value'
+           }
+           
         },
        
         initialize:function(){
@@ -49,9 +113,18 @@
             $('.eight').val(t);    
             this.set('poreskaOsnovica',t);
         },
-        
-        flag:''
-         
+        flag:'',
+         dataModel:{
+            two:'sifra',
+            three:'vrstaDobra',
+            foure:'jm',
+            five:'kol',
+            six:'cena',
+            seven:'rab',
+            eight:'poreskaOsnovica',
+            nine:'pdv',
+            ten:'ukupanIznos'
+        }
         
     });
     
@@ -106,7 +179,7 @@
             self.$el.append(y.el);
           })
     
-          this.$el.append('<tr><td><input type="text" class="one" value = "1" disabled></td>,<td><input type="text" class="two"></td>,<td><input type="text" class="three"></td>,<td><input type="text" class="foure" value="kom"></td>,<td><input type="text" class="five"></td>,<td><input type="text" class="six"></td>,<td><input type="text" class="seven" value="0"></td>,<td><input type="text" class="eight"></td>,<td><input type="text" class="nine" value="20"></td>,<td><input type="text" class="ten"></td></tr>'); 
+          this.$el.append('<tr><td><input type="text" class="one" value = "1" disabled></td>,<td><input type="text" class="two"></td>,<td><input type="text" class="three"></td>,<td><input type="text" class="foure" value=""></td>,<td><input type="text" class="five"></td>,<td><input type="text" class="six"></td>,<td><input type="text" class="seven" value="0"></td>,<td><input type="text" class="eight"></td>,<td><input type="text" class="nine" value="20"></td>,<td><input type="text" class="ten"></td></tr>'); 
        },
         map:{
             
@@ -118,61 +191,37 @@
             seven:{next:'nine'},
             nine:{next:'undefined'}
                        
-        },
-        
-        dataModel:{
-            two:'sifra',
-            three:'vrstaDobra',
-            foure:'jm',
-            five:'kol',
-            six:'cena',
-            seven:'rab',
-            eight:'poreskaOsnovica',
-            nine:'pdv',
-            ten:'ukupanIznos'
-        },
-      
-       
+        }, 
         setFocus:function(e){
             if(e.keyCode === 13){
-                var y = $(e.target).attr('class'); // uzima nazziv klase za sadasnje polje
-                  var set_next = this.map[y].next;// uzima naziv za sledece polje
-                  var w =this.dataModel[y];  // uzima naziv koji treba da se setuje u model
-                 var sett = $('.'+y).val();   // uzima vrednost input polja
+                var y = $(e.target).attr('class'), // uzima nazziv klase za sadasnje polje
+                    set_next = this.map[y].next,// uzima naziv za sledece polje
+                    w = this.model.dataModel[y],  // uzima naziv koji treba da se setuje u model
+                    sett = $('.'+y).val();   // uzima vrednost input polja
                 this.model.flag = false;
                 this.model.set(w,sett,{validate:true});
                 this.model.set('rb',this.model.ordinalNumber());
-               
-               
-                
                 if(set_next === 'nine'){
                     this.model.porOsnovica();
-                }
-               
-                
-                
+                }              
                 if(set_next === 'undefined'){
                     this.model.ukIznos();
                     collection.add(this.model);
                     this.model = new Model();
+                    this.model.validation_help = this.model.res_validation_help();
                     this.resetInput();
                     $('.two').focus();
                     $('.one').val(this.model.ordinalNumber());
-                }
-                
+                } 
                 if(this.model.flag === true){
-                    $('.'+y).val('').focus();
+                    $('.'+y).val('').focus();      
                 }
-                else{
-                    
+                else{      
                     $('.'+set_next).focus();
-                };
-                
-                 
+                    this.model.validation_help[set_next]= true; 
+                };  
             }
-           
         },
-        
           resetInput:function(){
             $('.one').val('');
             $('.two').val('');
@@ -185,9 +234,6 @@
             $('.nine').val('');
             $('.ten').val('');
         }
-       
-       
-       
    });
     
     $(document).ready(function(){
