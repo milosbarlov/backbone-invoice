@@ -1,5 +1,6 @@
 td,th{
     width:100px;
+    text-align: center;
     
 }
 input[type='text']{
@@ -21,5 +22,7 @@ input[type='text']{
    float:right;
    margin-right:250px;
    margin-top:50px;
-   
+}
+.remove{
+    cursor: pointer;
 }

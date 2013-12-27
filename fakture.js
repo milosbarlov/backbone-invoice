@@ -93,14 +93,16 @@
                 alert(error);
             })
         },
-           ukIznos:function(){
+        ukIznos:function(){
            var x = parseFloat($('.eight').val()),
                y = parseFloat($('.nine').val()),
                z = x*y/100,
                q = x+z;
+               q = q.toFixed(2);
+               q = parseFloat(q);
            this.set('ukupanIznos',q); 
         },
-          ordinalNumber:function(){
+         ordinalNumber:function(){
              return collection.length + 1;
         },
           porOsnovica:function(){
@@ -109,6 +111,8 @@
                 th = parseFloat($('.seven').val());
                  t = po*sec*th/100;
                  t =  po * sec - t;
+                 t = t.toFixed(2);
+                 t = parseFloat(t);
             $('.eight').val(t);    
             this.set('poreskaOsnovica',t);
         },
@@ -145,7 +149,7 @@
             this.$el.html(_.map([this.model.get('rb'),this.model.get('sifra'),this.model.get('vrstaDobra'),
                             this.model.get('jm'),this.model.get('kol'),this.model.get('cena'),
                             this.model.get('rab'),this.model.get('poreskaOsnovica'),this.model.get('pdv'),
-                            this.model.get('ukupanIznos')],function(val,key){
+                            this.model.get('ukupanIznos'),'<span class="glyphicon glyphicon-remove remove" data-number='+this.model.get('rb')+'></span>'],function(val,key){
                 return '<td>'+val+'</td>'
             }));
             return this
@@ -164,14 +168,15 @@
           })
        },
          events:{
-            'keypress':'setFocus'
+            'keypress':'setFocus',
+            'click .remove':'remove_row'
         },
         
        render:function(){
            var self = this;
            $(this.el).empty();
            
-           this.$el.append('<th>rb</th>','<th>sifra</th>','<th>vr.dobra</th>','<th>jm</th>','<th>kol</th>','<th>cena</th>','<th>rab%</th>','<th>por.osnovica</th>','<th>pdv%</th>','<th>uk.iznos</th>')
+           this.$el.append('<th>rb</th>','<th>sifra</th>','<th>vr.dobra</th>','<th>jm</th>','<th>kol</th>','<th>cena</th>','<th>rab%</th>','<th>por.osnovica</th>','<th>pdv%</th>','<th>uk.iznos</th>','<th>Brisanje</th>')
            
          _.each(collection.models,function(model,index){
             var y = new ViewModel({model:model});
@@ -179,7 +184,7 @@
             self.$el.append(y.el);
           })
     
-          this.$el.append('<tr><td><input type="text" class="one" value = "1" disabled></td>,<td><input type="text" class="two"></td>,<td><input type="text" class="three"></td>,<td><input type="text" class="foure" value=""></td>,<td><input type="text" class="five"></td>,<td><input type="text" class="six"></td>,<td><input type="text" class="seven" value="0"></td>,<td><input type="text" class="eight"></td>,<td><input type="text" class="nine"></td>,<td><input type="text" class="ten"></td></tr>'); 
+          this.$el.append('<tr><td><input type="text" class="one" value = "1" disabled></td>,<td><input type="text" class="two"></td>,<td><input type="text" class="three"></td>,<td><input type="text" class="foure" value=""></td>,<td><input type="text" class="five"></td>,<td><input type="text" class="six"></td>,<td><input type="text" class="seven"></td>,<td><input type="text" class="eight"></td>,<td><input type="text" class="nine"></td>,<td><input type="text" class="ten"></td><td><input type="text"></td></tr>'); 
           
           return this
        },
@@ -193,7 +198,14 @@
             seven:{next:'nine'},
             nine:{next:'undefined'}
                        
-        }, 
+        },
+        remove_row:function(e){
+         var t = $(e.target).attr('data-number');
+             t = t - 1;
+             t = this.collection.at(t);
+             this.collection.remove(t);
+             this.render();
+        },
         setFocus:function(e){
             if(e.keyCode === 13){
                 var y = $(e.target).attr('class'), // uzima nazziv klase za sadasnje polje
@@ -267,10 +279,12 @@
              y = y + this.collection.at(i).get('ukupanIznos');
              z = y - x;
            }
-           
-          $('.por_osn').html(x);
-          $('.sum').html(y);
-          $('.pdv_uk').html(z)
+            z = z.toFixed(2);
+            x = x.toFixed(2);
+            z = parseFloat(z);
+            $('.por_osn').html(x);
+            $('.sum').html(y);
+            $('.pdv_uk').html(z)
        }
        
        
