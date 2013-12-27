@@ -94,26 +94,27 @@
             })
         },
            ukIznos:function(){
-           var x = parseInt($('.eight').val()),
-               y = parseInt($('.nine').val());
-               y = x*y/100;
-               y = x+y;               
-           this.set('ukupanIznos',y);
+           var x = parseFloat($('.eight').val()),
+               y = parseFloat($('.nine').val()),
+               z = x*y/100,
+               q = x+z;
+           this.set('ukupanIznos',q); 
         },
           ordinalNumber:function(){
              return collection.length + 1;
-           
         },
           porOsnovica:function(){
-            var po = parseInt($('.five').val()),
-               sec = parseInt($('.six').val()),
-                th = parseInt($('.seven').val());
+            var po = parseFloat($('.five').val()),
+               sec = parseFloat($('.six').val()),
+                th = parseFloat($('.seven').val());
                  t = po*sec*th/100;
-                t =  po * sec - t;
+                 t =  po * sec - t;
             $('.eight').val(t);    
             this.set('poreskaOsnovica',t);
         },
+        
         flag:'',
+        
          dataModel:{
             two:'sifra',
             three:'vrstaDobra',
@@ -132,8 +133,7 @@
          
     var Collection = Backbone.Collection.extend({
        model:Model
-    });
-     
+    });  
     var collection = new Collection(); 
     
     ///////////////     view MODEL    ///////////////////////
@@ -179,7 +179,9 @@
             self.$el.append(y.el);
           })
     
-          this.$el.append('<tr><td><input type="text" class="one" value = "1" disabled></td>,<td><input type="text" class="two"></td>,<td><input type="text" class="three"></td>,<td><input type="text" class="foure" value=""></td>,<td><input type="text" class="five"></td>,<td><input type="text" class="six"></td>,<td><input type="text" class="seven" value="0"></td>,<td><input type="text" class="eight"></td>,<td><input type="text" class="nine" value="20"></td>,<td><input type="text" class="ten"></td></tr>'); 
+          this.$el.append('<tr><td><input type="text" class="one" value = "1" disabled></td>,<td><input type="text" class="two"></td>,<td><input type="text" class="three"></td>,<td><input type="text" class="foure" value=""></td>,<td><input type="text" class="five"></td>,<td><input type="text" class="six"></td>,<td><input type="text" class="seven" value="0"></td>,<td><input type="text" class="eight"></td>,<td><input type="text" class="nine"></td>,<td><input type="text" class="ten"></td></tr>'); 
+          
+          return this
        },
         map:{
             
@@ -204,7 +206,7 @@
                 if(set_next === 'nine'){
                     this.model.porOsnovica();
                 }              
-                if(set_next === 'undefined'){
+                if(set_next === 'undefined' && this.model.get('pdv') != ''){
                     this.model.ukIznos();
                     collection.add(this.model);
                     this.model = new Model();
@@ -235,18 +237,60 @@
             $('.ten').val('');
         }
    });
+   
+   var View_All = Backbone.View.extend({
+       tagName:'table border="1"',
+       className:'all',
+       initialize:function(){
+         var self = this;
+         this.render();
+         this.collection.on('add',function(){
+             self.set_finaly();
+         })
+       },
+       render:function(){
+         $(this.el).empty();
+         var html = '<tr><th>por.osnovica</th><><th>Uk.pdv</th><th>Ukupno</th></tr><tr><td class="por_osn">0</td><td class="pdv_uk">0</td><td class="sum">0</td></tr>';
+         this.$el.append(html);
+
+         //alert(this.collection.at(0).get('poreskaOsnovica'));
+        
+       },
+       
+       set_finaly:function(){
+            var x = 0,
+                z = 0,    
+                y = 0;
+            for(i=0;i<collection.length;i++){
+              
+             x = x + this.collection.at(i).get('poreskaOsnovica');
+             y = y + this.collection.at(i).get('ukupanIznos');
+             z = y - x;
+           }
+           
+          $('.por_osn').html(x);
+          $('.sum').html(y);
+          $('.pdv_uk').html(z)
+       }
+       
+       
+       
+   })
+   
     
     $(document).ready(function(){
         var model = new Model();
-       
-       
+  
         var viewCollection = new ViewCollection({collection:collection,model:model});
         viewCollection.render();
-      
-       
-        $('body').append(viewCollection.el);
         
-    
+        var view_all = new View_All({collection:collection});
+        
+        
+        $('body').append(viewCollection.el);
+        $('body').append(view_all.el);
+        
+        
         
     })
     

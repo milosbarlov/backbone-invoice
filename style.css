@@ -1,5 +1,6 @@
 td,th{
     width:100px;
+    
 }
 input[type='text']{
     width:100px;
@@ -14,8 +15,11 @@ input[type='text']{
     text-align: center;
     font-size: 16px;
     font-weight: bold;
-    display: inline-block;
-    
-    
-    
+    display: inline-block;    
+}
+.all{
+   float:right;
+   margin-right:250px;
+   margin-top:50px;
+   
 }
