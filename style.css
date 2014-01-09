@@ -20,9 +20,45 @@ input[type='text']{
 }
 .all{
    float:right;
-   margin-right:250px;
    margin-top:50px;
+}
+.all td,th{
+    width:130px !important;
 }
 .remove{
     cursor: pointer;
 }
+.container{
+   min-width:1000px;
+    min-height: 400px;
+    margin:10 auto;
+}
+.blank{
+    display:none;
+}
+.full{
+    display:block;
+}
+.data_all{
+   margin-top:20px;
+   margin-bottom: 260px;
+}
+.data_supplier {
+    float:left;
+}
+.data_supplier td,th{
+    width:200px;
+}
+.data_supplier input{
+    width:100%;
+}
+.data_customer{
+    float:right;
+}
+.data_customer td,th{
+    width:200px;
+}
+.data_customer input{
+    width:100%;
+}
+

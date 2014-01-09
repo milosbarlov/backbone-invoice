@@ -168,14 +168,12 @@
           })
        },
          events:{
-            'keypress':'setFocus',
+            'keypress input':'setFocus',
             'click .remove':'remove_row'
         },
-        
        render:function(){
            var self = this;
            $(this.el).empty();
-           
            this.$el.append('<th>rb</th>','<th>sifra</th>','<th>vr.dobra</th>','<th>jm</th>','<th>kol</th>','<th>cena</th>','<th>rab%</th>','<th>por.osnovica</th>','<th>pdv%</th>','<th>uk.iznos</th>','<th>Brisanje</th>')
            
          _.each(collection.models,function(model,index){
@@ -204,7 +202,11 @@
              t = t - 1;
              t = this.collection.at(t);
              this.collection.remove(t);
+             for(i=0;i<this.collection.length;i++){
+                this.collection.at(i).set('rb',i+1); 
+             }
              this.render();
+             $('.one').val(this.model.ordinalNumber());     
         },
         setFocus:function(e){
             if(e.keyCode === 13){
@@ -215,7 +217,7 @@
                 this.model.flag = false;
                 this.model.set(w,sett,{validate:true});
                 this.model.set('rb',this.model.ordinalNumber());
-                if(set_next === 'nine'){
+                if(set_next === 'nine' && sett != ''){
                     this.model.porOsnovica();
                 }              
                 if(set_next === 'undefined' && this.model.get('pdv') != ''){
@@ -264,11 +266,7 @@
          $(this.el).empty();
          var html = '<tr><th>por.osnovica</th><><th>Uk.pdv</th><th>Ukupno</th></tr><tr><td class="por_osn">0</td><td class="pdv_uk">0</td><td class="sum">0</td></tr>';
          this.$el.append(html);
-
-         //alert(this.collection.at(0).get('poreskaOsnovica'));
-        
-       },
-       
+       }, 
        set_finaly:function(){
             var x = 0,
                 z = 0,    
@@ -281,14 +279,38 @@
            }
             z = z.toFixed(2);
             x = x.toFixed(2);
+            y = y.toFixed(2);
             z = parseFloat(z);
             $('.por_osn').html(x);
             $('.sum').html(y);
             $('.pdv_uk').html(z)
        }
-       
-       
-       
+   })
+   
+   var HeaderView = Backbone.View.extend({
+       el:'.data_all',
+       events:{
+          'dblclick .first':'set_data',
+          'blur input':'save_data',
+          'keypress':'close_input'
+       },
+       set_data:function(e){
+         var e = $(e.target);
+             e.attr('class','blank');
+            var red = e.next().removeAttr('class');
+            $('.data_all').find('input').focus();
+       },
+       save_data:function(e){
+           var e = $(e.target),
+               prev = e.parent().prev();
+               prev.html(e.val());
+               prev.removeAttr('class');
+               e.parent().prev().attr('class','first');
+               e.parent().attr('class','blank');          
+       },
+       close_input:function(e){
+           this.save_data(e);
+       }
    })
    
     
@@ -298,11 +320,14 @@
         var viewCollection = new ViewCollection({collection:collection,model:model});
         viewCollection.render();
         
+        var headerView = new HeaderView();
+       
+        
         var view_all = new View_All({collection:collection});
         
         
-        $('body').append(viewCollection.el);
-        $('body').append(view_all.el);
+        $('.container').append(viewCollection.el);
+        $('.container').append(view_all.el);
         
         
         
