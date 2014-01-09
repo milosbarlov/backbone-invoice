@@ -309,7 +309,9 @@
                e.parent().attr('class','blank');          
        },
        close_input:function(e){
+           if(e.keyCode === 13){
            this.save_data(e);
+            }
        }
    })
    
